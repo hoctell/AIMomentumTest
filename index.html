@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Momentum Test</title>
+  <style>
+    .red-border {
+        border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Currency</th>
+          <th scope="col">Original</th>
+          <th scope="col">New</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(rate, currency) in rates">
+          <th scope="row" :class="{ 'red-border': currency === 'HKD' }">{{ currency }}</th>
+          <td :class="{ 'red-border': isEven(rate) || currency === 'HKD' }">{{ rate }}</td>
+          <td :class="{ 'red-border': isEven(newRates[currency]) || currency === 'HKD' }">{{ newRates[currency] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+<script>
+  function isEven(num) {
+    return num % 2 === 0;
+  }
+
+  var vm = new Vue({
+    el: '#container',
+    data: {
+      rates: {},
+      newRates: {},
+    },
+    created: function() {
+      $.ajax({
+        'url': 'http://data.fixer.io/api/latest?access_key=fc7dcf43c70ccbdc6ac46df7b6e8f9dc',
+      }).then(function(data) {
+        this.rates = data.rates;
+        for (var key in this.rates) {
+            if (!this.rates.hasOwnProperty(key)) continue;
+            this.newRates[key] = this.rates[key] + 10.0002;
+        }
+      }.bind(this));
+    },
+    methods: {
+      isEven: isEven
+    }
+  });
+</script>
+</body>
+</html>
